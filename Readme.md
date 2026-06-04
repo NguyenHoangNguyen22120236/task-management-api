@@ -1,51 +1,29 @@
 # Task Management API
 
-![CI](https://github.com/YOUR_GITHUB_USERNAME/task-management-api/actions/workflows/ci.yml/badge.svg)
+![CI](https://github.com/NguyenNH36/task-management-api/actions/workflows/ci.yml/badge.svg)
 
 A production-style Task Management API built with Go, Gin, OpenAPI 3.0, and oapi-codegen.
 
-## Current Scope
+## Features
 
-This project currently supports:
-
-- Create task
-- Get all tasks
-- Get task by ID
-- Update task
-- Delete task
-- Health check
-- OpenAPI-generated routes
-- OpenAPI request validation
-- In-memory repository
-- Service/repository/handler layering
-- Unit tests with go test and Testify
+- Create, read, update, and delete tasks
+- Health check endpoint
+- OpenAPI 3.0 spec with request validation
+- PostgreSQL persistence via pgx
+- Database migrations with golang-migrate
+- Structured JSON logging with request IDs
+- Layered architecture (handler/service/repository)
 
 ## Tech Stack
 
-### Services & Frameworks
-
 - Go
 - Gin framework
-- OpenAPI 3.0
-- JSON Schema
-- oapi-codegen v2
-
-### Testing
-
-- go test
-- Testify
-
-### Planned Next
-
-- Docker
-- GitHub Actions
-- DynamoDB or RDS
-- AWS SDK for Go
-- SQS + DLQ
-- ECS or Lambda
-- Terraform
-- Kong API Gateway
-- CloudWatch / Datadog
+- OpenAPI 3.0 + oapi-codegen
+- PostgreSQL (pgx)
+- golang-migrate
+- slog for structured logging
+- go test + Testify
+- go.uber.org/mock (mockgen)
 
 ## API Endpoints
 
@@ -80,6 +58,44 @@ DATABASE_URL=postgres://task_user:task_password@localhost:5432/task_db?sslmode=d
 GIN_MODE=debug
 ```
 
+## OpenAPI
+
+The OpenAPI spec lives in [api/openapi.yaml](api/openapi.yaml) and generated handlers live in [internal/api/task_api.gen.go](internal/api/task_api.gen.go).
+
+## Run Locally
+
+1. Start PostgreSQL (Docker Compose):
+
+```bash
+docker compose up -d
+```
+
+2. Apply migrations:
+
+```bash
+migrate -path ./migrations -database "$DATABASE_URL" up
+```
+
+3. Run the API:
+
+```bash
+go run ./cmd/api
+```
+
+## Run with Docker
+
+Build the image:
+
+```bash
+docker build -t task-api .
+```
+
+Run the container (make sure PostgreSQL is reachable):
+
+```bash
+docker run --rm -p 8080:8080 -e DATABASE_URL="$DATABASE_URL" -e GIN_MODE=release task-api
+```
+
 ## Testing
 
 This project uses:
@@ -92,6 +108,12 @@ Generate mocks:
 
 ```bash
 mockgen -source="./internal/repository/task_repository.go" -destination="./internal/mocks/mock_task_repository.go" -package=mocks
+```
+
+Run tests:
+
+```bash
+go test ./...
 ```
 
 
@@ -119,8 +141,3 @@ Example:
 ```bash
 curl -i http://localhost:8080/health -H "X-Request-ID: test-request-123"
 ```
-
-## Run Locally
-
-```bash
-go run ./cmd/api

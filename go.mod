@@ -1,6 +1,6 @@
 module github.com/NguyenNH36/task-management-api
 
-go 1.26.3
+go 1.25.0
 
 require (
 	github.com/getkin/kin-openapi v0.140.0

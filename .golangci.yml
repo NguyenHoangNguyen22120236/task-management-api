@@ -7,11 +7,6 @@ linters:
   enable:
     - govet
     - staticcheck
+    - errcheck
     - ineffassign
     - unused
-    - errcheck
-
-issues:
-  exclude-dirs:
-    - internal/api
-    - internal/mocks
